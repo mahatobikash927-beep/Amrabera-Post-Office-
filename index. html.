@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Amrabera Post Office Savings Calculator</title>
+
+<style>
+:root{
+  --red:#9b111e;
+  --darkred:#72000d;
+  --lightred:#fff1f2;
+  --border:#e5b8bd;
+  --text:#222;
+  --green:#176b3a;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#f7f7f7;
+  color:var(--text);
+}
+
+.header{
+  background:linear-gradient(135deg,var(--darkred),var(--red));
+  color:white;
+  text-align:center;
+  padding:22px 12px;
+  box-shadow:0 3px 10px rgba(0,0,0,.18);
+}
+
+.header .icon{
+  font-size:38px;
+}
+
+.header h1{
+  margin:5px 0;
+  font-size:23px;
+  letter-spacing:.5px;
+}
+
+.header p{
+  margin:4px 0;
+  font-size:14px;
+}
+
+.container{
+  max-width:850px;
+  margin:auto;
+  padding:15px;
+}
+
+.notice{
+  background:#fff;
+  border-left:5px solid var(--red);
+  padding:12px;
+  margin-bottom:15px;
+  border-radius:6px;
+  font-size:13px;
+  line-height:1.5;
+}
+
+.tabs{
+  display:flex;
+  gap:6px;
+  margin-bottom:15px;
+}
+
+.tab{
+  flex:1;
+  padding:12px 5px;
+  border:1px solid var(--red);
+  background:white;
+  color:var(--red);
+  border-radius:7px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.tab.active{
+  background:var(--red);
+  color:white;
+}
+
+.card{
+  background:white;
+  border-radius:10px;
+  padding:18px;
+  margin-bottom:15px;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+
+.card h2{
+  color:var(--red);
+  margin-top:0;
+  font-size:20px;
+}
+
+label{
+  display:block;
+  font-weight:bold;
+  margin-top:12px;
+  margin-bottom:5px;
+}
+
+input,select{
+  width:100%;
+  padding:12px;
+  border:1px solid #bbb;
+  border-radius:6px;
+  font-size:16px;
+}
+
+button.calculate{
+  width:100%;
+  margin-top:18px;
+  padding:13px;
+  background:var(--red);
+  color:white;
+  border:none;
+  border-radius:7px;
+  font-size:17px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+button.calculate:hover{
+  background:var(--darkred);
+}
+
+.result{
+  display:none;
+  margin-top:18px;
+  border:1px solid var(--border);
+  border-radius:8px;
+  overflow:hidden;
+}
+
+.result-title{
+  background:var(--red);
+  color:white;
+  padding:10px;
+  font-weight:bold;
+  text-align:center;
+}
+
+.result table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+.result td{
+  padding:10px;
+  border-bottom:1px solid #eee;
+}
+
+.result td:last-child{
+  text-align:right;
+  font-weight:bold;
+}
+
+.highlight{
+  background:var(--lightred);
+  color:var(--red);
+  font-size:17px;
+}
+
+.interest{
+  color:var(--green);
+}
+
+.small{
+  font-size:12px;
+  color:#666;
+  line-height:1.5;
+}
+
+.checkbox{
+  display:flex;
+  gap:8px;
+  align-items:flex-start;
+  margin-top:14px;
+  padding:10px;
+  background:#fff8f8;
+  border:1px solid #f0d2d5;
+  border-radius:6px;
+}
+
+.checkbox input{
+  width:auto;
+  margin-top:3px;
+}
+
+.rate-box{
+  background:#fff;
+  border-radius:10px;
+  padding:15px;
+  margin-bottom:15px;
+  box-shadow:0 2px 8px rgba(0,0,0,.07);
+}
+
+.rate-box h3{
+  margin-top:0;
+  color:var(--red);
+}
+
+.rates{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:8px;
+}
+
+.rate{
+  background:var(--lightred);
+  padding:10px;
+  border-radius:6px;
+  text-align:center;
+}
+
+.rate b{
+  display:block;
+  font-size:18px;
+  color:var(--red);
+}
+
+.footer{
+  text-align:center;
+  background:var(--darkred);
+  color:white;
+  padding:18px 10px;
+  margin-top:20px;
+  font-size:12px;
+  line-height:1.6;
+}
+
+.hidden{
+  display:none;
+}
+
+@media(max-width:500px){
+  .header h1{
+    font-size:19px;
+  }
+
+  .rates{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .tabs{
+    gap:4px;
+  }
+
+  .tab{
+    font-size:13px;
+    padding:10px 3px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <div class="icon">✉</div>
+  <h1>AMRABERA BRANCH POST OFFICE</h1>
+  <p>Post Office Savings Calculator</p>
+  <p>PIN – 723127 | India Post</p>
+</div>
+
+<div class="container">
+
+<div class="notice">
+  <b>Important:</b> This calculator is for general illustration.
+  Actual maturity/interest may vary according to Government notifications,
+  account opening/deposit dates and applicable Post Office rules.
+</div>
+
+<!-- RATES -->
+
+<div class="rate-box">
+
+<h3>Current Interest Rates</h3>
+
+<div class="rates">
+
+<div class="rate">
+RD
+<b id="rdRateDisplay">6.7%</b>
+</div>
+
+<div class="rate">
+TD – 1 Year
+<b id="td1RateDisplay">6.9%</b>
+</div>
+
+<div class="rate">
+TD – 2 Years
+<b id="td2RateDisplay">7.0%</b>
+</div>
+
+<div class="rate">
+TD – 3 Years
+<b id="td3RateDisplay">7.1%</b>
+</div>
+
+<div class="rate">
+TD – 5 Years
+<b id="td5RateDisplay">7.5%</b>
+</div>
+
+<div class="rate">
+Savings Account
+<b id="sbRateDisplay">4.0%</b>
+</div>
+
+<div class="rate">
+SSA
+<b id="ssaRateDisplay">8.2%</b>
+</div>
+
+</div>
+
+<p class="small">
+Rates are editable in the JavaScript section of this page.
+Always verify the applicable Government notification before using
+the calculator for an actual customer transaction.
+</p>
+
+</div>
+
+
+<!-- TABS -->
+
+<div class="tabs">
+
+<button class="tab active" onclick="showTab('rd',this)">
+RD
+</button>
+
+<button class="tab" onclick="showTab('td',this)">
+TD
+</button>
+
+<button class="tab" onclick="showTab('ssa',this)">
+SSA
+</button>
+
+</div>
+
+
+<!-- RD -->
+
+<div id="rd" class="card">
+
+<h2>Recurring Deposit Calculator</h2>
+
+<label>Monthly Deposit (₹)</label>
+
+<input
+type="number"
+id="rdMonthly"
+min="100"
+step="10"
+placeholder="Example: 500">
+
+<button class="calculate" onclick="calculateRD()">
+Calculate RD
+</button>
+
+<div id="rdResult" class="result">
+
+<div class="result-title">
+5 Year RD Result
+</div>
+
+<table>
+
+<tr>
+<td>Total Deposit</td>
+<td id="rdDeposit"></td>
+</tr>
+
+<tr>
+<td class="interest">Interest Earned</td>
+<td class="interest" id="rdInterest"></td>
+</tr>
+
+<tr class="highlight">
+<td>Maturity Value</td>
+<td id="rdMaturity"></td>
+</tr>
+
+</table>
+
+</div>
+
+</div>
+
+
+<!-- TD -->
+
+<div id="td" class="card hidden">
+
+<h2>Time Deposit Calculator</h2>
+
+<label>Deposit Amount (₹)</label>
+
+<input
+type="number"
+id="tdPrincipal"
+min="200"
+step="200"
+placeholder="Example: 100000">
+
+<label>TD Period</label>
+
+<select id="tdYears">
+
+<option value="1">1 Year</option>
+<option value="2">2 Years</option>
+<option value="3">3 Years</option>
+<option value="5">5 Years</option>
+
+</select>
+
+
+<div class="checkbox">
+
+<input type="checkbox" id="tdSB">
+
+<label for="tdSB" style="margin:0;font-weight:normal;">
+Keep annual TD interest in Post Office Savings Account
+and earn Savings Account interest on it.
+</label>
+
+</div>
+
+
+<button class="calculate" onclick="calculateTD()">
+Calculate TD
+</button>
+
+
+<div id="tdResult" class="result">
+
+<div class="result-title">
+TD Result
+</div>
+
+<table>
+
+<tr>
+<td>Principal</td>
+<td id="tdPrincipalResult"></td>
+</tr>
+
+<tr>
+<td>Annual TD Interest</td>
+<td id="tdAnnualInterest"></td>
+</tr>
+
+<tr>
+<td>Total TD Interest</td>
+<td id="tdTotalInterest"></td>
+</tr>
+
+<tr id="tdSBRow">
+<td class="interest">
+Interest earned on TD Interest in SB
+</td>
+
+<td class="interest" id="tdSBInterest">
+</td>
+</tr>
+
+<tr class="highlight">
+<td>Total Amount</td>
+<td id="tdMaturity"></td>
+</tr>
+
+</table>
+
+<p class="small" style="padding:10px">
+
+For the SB option, the annual TD interest is assumed to be
+credited to the Post Office Savings Account and retained there.
+The actual SB interest depends on the applicable balance/date rules.
+
+</p>
+
+</div>
+
+</div>
+
+
+<!-- SSA -->
+
+<div id="ssa" class="card hidden">
+
+<h2>Sukanya Samriddhi Account Calculator</h2>
+
+<label>Annual Deposit (₹)</label>
+
+<input
+type="number"
+id="ssaAnnual"
+min="250"
+step="50"
+placeholder="Example: 50000">
+
+<label>Number of Years You Will Deposit</label>
+
+<select id="ssaDepositYears">
+
+<option value="15">15 Years</option>
+
+</select>
+
+<button class="calculate" onclick="calculateSSA()">
+Calculate SSA
+</button>
+
+<div id="ssaResult" class="result">
+
+<div class="result-title">
+SSA Illustration
+</div>
+
+<table>
+
+<tr>
+<td>Total Deposits</td>
+<td id="ssaDeposit"></td>
+</tr>
+
+<tr>
+<td class="interest">
+Interest Earned
+</td>
+<td class="interest" id="ssaInterest"></td>
+</tr>
+
+<tr class="highlight">
+<td>Estimated Maturity Value</td>
+<td id="ssaMaturity"></td>
+</tr>
+
+</table>
+
+<p class="small" style="padding:10px">
+
+SSA maturity depends on the date of opening, timing of deposits,
+applicable Government interest rates and Sukanya Samriddhi rules.
+This calculator provides an illustration.
+
+</p>
+
+</div>
+
+</div>
+
+
+</div>
+
+
+<div class="footer">
+
+<b>AMRABERA BRANCH POST OFFICE</b><br>
+PIN – 723127<br><br>
+
+RD • TD • Sukanya Samriddhi<br>
+
+This calculator is an informational tool.
+For exact account values, please contact the Post Office.
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   INTEREST RATES
+   Change rates here whenever Government revises them.
+   ===================================================== */
+
+const RATES = {
+
+  RD: 6.7,
+
+  TD1: 6.9,
+  TD2: 7.0,
+  TD3: 7.1,
+  TD5: 7.5,
+
+  SB: 4.0,
+
+  SSA: 8.2
+
+};
+
+
+/* =====================================================
+   DISPLAY RATES
+   ===================================================== */
+
+document.getElementById("rdRateDisplay").innerText =
+RATES.RD + "%";
+
+document.getElementById("td1RateDisplay").innerText =
+RATES.TD1 + "%";
+
+document.getElementById("td2RateDisplay").innerText =
+RATES.TD2 + "%";
+
+document.getElementById("td3RateDisplay").innerText =
+RATES.TD3 + "%";
+
+document.getElementById("td5RateDisplay").innerText =
+RATES.TD5 + "%";
+
+document.getElementById("sbRateDisplay").innerText =
+RATES.SB + "%";
+
+document.getElementById("ssaRateDisplay").innerText =
+RATES.SSA + "%";
+
+
+/* =====================================================
+   TAB SYSTEM
+   ===================================================== */
+
+function showTab(tab,button){
+
+  document.getElementById("rd").classList.add("hidden");
+  document.getElementById("td").classList.add("hidden");
+  document.getElementById("ssa").classList.add("hidden");
+
+  document.getElementById(tab).classList.remove("hidden");
+
+  document.querySelectorAll(".tab").forEach(function(x){
+    x.classList.remove("active");
+  });
+
+  button.classList.add("active");
+}
+
+
+/* =====================================================
+   CURRENCY FORMAT
+   ===================================================== */
+
+function money(value){
+
+  return "₹" + Math.round(value).toLocaleString("en-IN");
+
+}
+
+
+/* =====================================================
+   RD CALCULATOR
+   ===================================================== */
+
+/*
+   Approximate 5-year RD calculation.
+
+   For customer-facing deployment, this should be replaced
+   with the exact Post Office RD maturity calculation table/
+   formula if exact account-level figures are required.
+*/
+
+function calculateRD(){
+
+  const monthly =
+    Number(document.getElementById("rdMonthly").value);
+
+  if(!monthly || monthly <= 0){
+
+    alert("Please enter a valid monthly deposit.");
+
+    return;
+  }
+
+
+  const months = 60;
+
+  const totalDeposit = monthly * months;
+
+  const rate = RATES.RD / 100;
+
+  /*
+    Approximate quarterly-compounding RD model.
+  */
+
+  let maturity = 0;
+
+  for(let month = 1; month <= months; month++){
+
+    const remainingMonths = months - month;
+
+    const years = remainingMonths / 12;
+
+    maturity += monthly *
+      Math.pow(1 + rate / 4, 4 * years);
+
+  }
+
+  const interest = maturity - totalDeposit;
+
+
+  document.getElementById("rdDeposit").innerText =
+    money(totalDeposit);
+
+  document.getElementById("rdInterest").innerText =
+    money(interest);
+
+  document.getElementById("rdMaturity").innerText =
+    money(maturity);
+
+  document.getElementById("rdResult").style.display =
+    "block";
+}
+
+
+/* =====================================================
+   TD CALCULATOR
+   ===================================================== */
+
+function calculateTD(){
+
+  const principal =
+    Number(document.getElementById("tdPrincipal").value);
+
+  const years =
+    Number(document.getElementById("tdYears").value);
+
+  if(!principal || principal < 200){
+
+    alert("Please enter a valid TD amount. TD amount should be in multiples of ₹200.");
+
+    return;
+  }
+
+
+  let rate;
+
+  if(years === 1)
+    rate = RATES.TD1;
+
+  if(years === 2)
+    rate = RATES.TD2;
+
+  if(years === 3)
+    rate = RATES.TD3;
+
+  if(years === 5)
+    rate = RATES.TD5;
+
+
+  /*
+     TD annual interest.
+
+     Post Office TD interest is paid annually.
+  */
+
+  const annualInterest =
+    principal * rate / 100;
+
+
+  const totalTDInterest =
+    annualInterest * years;
+
+
+  /*
+     Optional:
+     Annual TD interest remains in Savings Account.
+
+     Each annual interest payment is treated as a
+     deposit into the SB account and earns SB interest
+     thereafter.
+
+     Simplified annual model:
+     Year 1 interest receives SB interest for the
+     remaining years, year 2 for remaining years, etc.
+  */
+
+  let sbInterest = 0;
+
+  const keepInSB =
+    document.getElementById("tdSB").checked;
+
+
+  if(keepInSB){
+
+    const sbRate = RATES.SB / 100;
+
+    for(let year = 1; year <= years; year++){
+
+      const remainingYears =
+        years - year;
+
+      const interestAmount =
+        annualInterest;
+
+      sbInterest +=
+        interestAmount *
+        (Math.pow(1 + sbRate, remainingYears) - 1);
+
+    }
+
+  }
+
+
+  const finalAmount =
+    principal +
+    totalTDInterest +
+    sbInterest;
+
+
+  document.getElementById("tdPrincipalResult").innerText =
+    money(principal);
+
+  document.getElementById("tdAnnualInterest").innerText =
+    money(annualInterest);
+
+  document.getElementById("tdTotalInterest").innerText =
+    money(totalTDInterest);
+
+  document.getElementById("tdSBInterest").innerText =
+    money(sbInterest);
+
+  document.getElementById("tdMaturity").innerText =
+    money(finalAmount);
+
+
+  document.getElementById("tdResult").style.display =
+    "block";
+
+}
+
+
+/* =====================================================
+   SSA CALCULATOR
+   ===================================================== */
+
+/*
+   Simplified SSA illustration.
+
+   Deposits are assumed annually for 15 years.
+   Interest is then allowed to accumulate until
+   the 21-year maturity period.
+
+   Exact SSA calculation depends on deposit timing
+   and applicable Government rates.
+*/
+
+function calculateSSA(){
+
+  const annualDeposit =
+    Number(document.getElementById("ssaAnnual").value);
+
+  if(!annualDeposit || annualDeposit < 250){
+
+    alert("Please enter an annual deposit of at least ₹250.");
+
+    return;
+  }
+
+
+  const depositYears = 15;
+
+  const maturityYears = 21;
+
+  const rate = RATES.SSA / 100;
+
+
+  let balance = 0;
+
+  let totalDeposit = 0;
+
+
+  /*
+     Assume annual deposit at beginning of each year
+     for illustration.
+  */
+
+  for(let year = 1; year <= maturityYears; year++){
+
+    if(year <= depositYears){
+
+      balance += annualDeposit;
+
+      totalDeposit += annualDeposit;
+
+    }
+
+    balance =
+      balance * (1 + rate);
+
+  }
+
+
+  const interest =
+    balance - totalDeposit;
+
+
+  document.getElementById("ssaDeposit").innerText =
+    money(totalDeposit);
+
+  document.getElementById("ssaInterest").innerText =
+    money(interest);
+
+  document.getElementById("ssaMaturity").innerText =
+    money(balance);
+
+  document.getElementById("ssaResult").style.display =
+    "block";
+
+}
+
+</script>
+
+</body>
+</html>
